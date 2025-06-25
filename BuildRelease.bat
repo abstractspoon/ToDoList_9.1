@@ -1,9 +1,9 @@
-title ToDoList_Dev Release Build
+title ToDoList_9.1 Release Build
 
 ECHO OFF
 CLS
 
-ECHO ToDoList_Dev Release Build
+ECHO ToDoList_9.1 Release Build
 ECHO ==========================
 ECHO:
 

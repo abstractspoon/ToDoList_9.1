@@ -116,6 +116,8 @@ FINDSTR /C:"Unable to load file:" %OUTPUT_FILE%
 IF %errorlevel%==0 (
 ECHO [41m Versioning FAILED[0m
 ECHO:
+REM Open the log
+%OUTPUT_FILE%
 PAUSE
 EXIT
 )
@@ -155,6 +157,8 @@ FINDSTR /C:"The system cannot find the file specified." %OUTPUT_FILE%
 IF %errorlevel%==0 (
 ECHO [41m Symbols FAILED[0m
 ECHO:
+REM Open the log
+%OUTPUT_FILE%
 PAUSE
 EXIT
 )
@@ -247,6 +251,8 @@ FINDSTR /C:"The system cannot find the file specified." %OUTPUT_FILE% > NUL
 IF %errorlevel%==0 (
 ECHO [41m Zipping Binaries FAILED[0m
 ECHO:
+REM Open the log
+%OUTPUT_FILE%
 PAUSE
 EXIT
 )

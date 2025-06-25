@@ -1,9 +1,9 @@
-title ToDoList_Dev Debug Build
+title ToDoList_9.1 Debug Build
 
 ECHO OFF
 CLS
 
-ECHO ToDoList_Dev Debug Build
+ECHO ToDoList_9.1 Debug Build
 ECHO ========================
 ECHO:
 
@@ -60,6 +60,8 @@ FINDSTR /C:"Build FAILED." %OUTPUT_FILE%
 IF %errorlevel%==0 (
 ECHO [41m Build FAILED[0m
 ECHO:
+REM Open the log
+%OUTPUT_FILE%
 PAUSE
 EXIT
 )
@@ -86,6 +88,8 @@ FINDSTR /C:"tests FAILED" %OUTPUT_FILE%
 IF %errorlevel%==0 (
 ECHO [41m Tests FAILED[0m
 ECHO:
+REM Open the log
+%OUTPUT_FILE%
 PAUSE
 EXIT
 )
@@ -136,6 +140,8 @@ FINDSTR /C:"Build FAILED." %OUTPUT_FILE%
 IF %errorlevel%==0 (
 ECHO [41m Build FAILED[0m
 ECHO:
+REM Open the log
+%OUTPUT_FILE%
 PAUSE
 EXIT
 )
