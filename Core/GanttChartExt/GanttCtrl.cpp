@@ -5146,16 +5146,16 @@ BOOL CGanttCtrl::GetDateFromScrollPos(int nScrollPos, GTLC_MONTH_DISPLAY nDispla
 			double dMonthWidth = GetMonthWidth(nDisplay, rMonth.Width());
 
 			// calc month as offset to start of column
-			int nPxOffset = (nScrollPos - rMonth.left);
-			int nMonthOffset = (int)(nPxOffset / dMonthWidth);
+			int nPosOffset = (nScrollPos - rMonth.left);
+			int nMonthOffset = (int)(nPosOffset / dMonthWidth);
 
 			// clip rect to this month
-			rMonth.left += nPxOffset;
-			rMonth.right = (rMonth.left + (int)dMonthWidth);
+			rMonth.left += (int)(nMonthOffset * dMonthWidth);
+			rMonth.right = (int)(rMonth.left + dMonthWidth);
 
 			nMonth += nMonthOffset;
 
-			// Months here are one-based
+			// Months are one-based
 			nYear += ((nMonth - 1) / 12);
 			nMonth = (((nMonth - 1) % 12) + 1);
 		}
