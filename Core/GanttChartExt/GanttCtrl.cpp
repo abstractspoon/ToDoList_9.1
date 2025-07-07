@@ -3609,7 +3609,20 @@ BOOL CGanttCtrl::CalcDateRect(const CRect& rMonth, int nDaysInMonth,
 							const COleDateTime& dtMonthStart, const COleDateTime& dtMonthEnd, 
 							const COleDateTime& dtFrom, const COleDateTime& dtTo, CRect& rDate)
 {
-	if ((dtFrom > dtTo) || (dtTo < dtMonthStart) || (dtFrom > dtMonthEnd))
+	// The 'to' date being equal to the 'from' date is okay
+	// because the user might have deliberately set the start
+	// time and due time to be equal to indicate an event
+	if (dtFrom > dtTo)
+		return FALSE;
+
+	// If the 'to' date is equal to the month start then
+	// the bar belongs to the previous month
+	if (dtTo <= dtMonthStart)
+		return FALSE;
+
+	// If the 'from' date is greater than the month end then
+	// the bar belongs to the next month
+	if (dtFrom > dtMonthEnd)
 		return FALSE;
 
 	double dDayWidth = (rMonth.Width() / (double)nDaysInMonth);
@@ -3621,6 +3634,10 @@ BOOL CGanttCtrl::CalcDateRect(const CRect& rMonth, int nDaysInMonth,
 	if (dtTo < dtMonthEnd)
 		rDate.right = (rMonth.left + (int)((dtTo.m_dt - dtMonthStart.m_dt) * dDayWidth));
 
+	// Note: we don't check the width here because for short
+	// tasks under wide displays (eg. 1 day/year) the rect
+	// may be empty and yet we still want to signal that there 
+	// is something to draw
 	return (rDate.right > 0);
 }
 
