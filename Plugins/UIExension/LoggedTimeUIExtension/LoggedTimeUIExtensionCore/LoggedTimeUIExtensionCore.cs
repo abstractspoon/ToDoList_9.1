@@ -168,6 +168,7 @@ namespace LoggedTimeUIExtension
 			m_ToolbarRenderer.SetUITheme(theme);
 
 			m_WeekLabel.ForeColor = theme.GetAppDrawingColor(UITheme.AppColor.AppText);
+			m_WeekLabel.BackColor = BackColor;
 		}
 
 		public void SetTaskFont(String faceName, int pointSize)

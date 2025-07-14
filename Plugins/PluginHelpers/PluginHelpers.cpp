@@ -80,6 +80,11 @@ bool StringUtil::Find(String^ source, String^ findText, bool matchWhole, bool ma
 	return (-1 != Misc::Find(sSearchFor, sSearchIn, (BOOL)matchCase, (BOOL)matchWhole));
 }
 
+int StringUtil::NaturalCompare(String^ str1, String^ str2)
+{
+	return Misc::NaturalCompare(MS(str1), MS(str2));
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
 void Log::LogText(String^ text)
