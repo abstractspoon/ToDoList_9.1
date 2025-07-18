@@ -181,12 +181,11 @@ void CInputListCtrl::OnLButtonDown(UINT /*nFlags*/, CPoint point)
 	if (bWasEditing && IsCellSelected(nItem, nCol))
 		return;
 	
-	// if this is the second click or the user clicked on the column button
-	// then edit else update clicked pos unless we did not have the focus
 	if (nItem != -1)
 	{
 		CRect rBtn;
 
+		// 1. Edit if the click is on the column button
 		if (CanEditCell(nItem, nCol) && GetButtonRect(nItem, nCol, rBtn) && rBtn.PtInRect(point))
 		{
 			SetCurSel(nItem, nCol, TRUE); // notifies parent
@@ -198,23 +197,22 @@ void CInputListCtrl::OnLButtonDown(UINT /*nFlags*/, CPoint point)
 
 			EditCell(nItem, nCol, TRUE);
 		}
+		// 2. OR this is the second click on an already selected/focused cell
 		else if (CanEditSelectedCell() && bHadFocus && (nItem == nSelItem) && (nCol == nSelCol))
 		{
 			EditCell(nItem, nCol, FALSE);
 		}
-		else
+		else // 3. select and focus the (new) item
 		{
 			m_nItemLastSelected = nItem;
 			m_nColLastSelected = nCol;
 
 			SetCurSel(nItem, nCol, TRUE); // notifies parent
 			SetItemFocus(nItem, TRUE);
-
-			// scroll cell into view
-			ScrollCellIntoView(nItem, nCol);
 		}
 
 		m_nCurCol = nCol;
+		ScrollCellIntoView(nItem, nCol);
 	}
 	else
 	{
