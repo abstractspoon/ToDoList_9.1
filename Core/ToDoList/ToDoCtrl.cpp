@@ -3020,14 +3020,11 @@ BOOL CToDoCtrl::CreateNewTask(const CString& sText, TDC_INSERTWHERE nWhere, BOOL
 
 BOOL CToDoCtrl::CanCreateNewTask(TDC_INSERTWHERE nInsertWhere) const
 {
-	if (!CanEditSelectedTask(TDCA_NEWTASK))
-		return FALSE;
-
 	switch (nInsertWhere)
 	{
 	case TDC_INSERTATTOP:
 	case TDC_INSERTATBOTTOM:
-		return TRUE;
+		return !IsReadOnly();
 
 	case TDC_INSERTATTOPOFSELTASKPARENT:
 	case TDC_INSERTATBOTTOMOFSELTASKPARENT:
@@ -3035,6 +3032,7 @@ BOOL CToDoCtrl::CanCreateNewTask(TDC_INSERTWHERE nInsertWhere) const
 	case TDC_INSERTBEFORESELTASK:
 	case TDC_INSERTATTOPOFSELTASK: 
 	case TDC_INSERTATBOTTOMOFSELTASK:
+		if (CanEditSelectedTask(TDCA_NEWTASK))
 		{
 			HTREEITEM htiParent = NULL, htiAfter = NULL;
 
@@ -3044,7 +3042,7 @@ BOOL CToDoCtrl::CanCreateNewTask(TDC_INSERTWHERE nInsertWhere) const
 				break; // handled below
 
 			case 1:
-				VERIFY (m_taskTree.GetInsertLocation(nInsertWhere, htiParent, htiAfter));
+				VERIFY(m_taskTree.GetInsertLocation(nInsertWhere, htiParent, htiAfter));
 				break;
 
 			default:
@@ -3062,18 +3060,18 @@ BOOL CToDoCtrl::CanCreateNewTask(TDC_INSERTWHERE nInsertWhere) const
 			return !m_data.IsTaskReference(GetTaskID(htiParent));
 		}
 		break;
+
+	default:
+		ASSERT(0);
+		break;
 	}
 
-	ASSERT(0);
 	return FALSE;
 }
 
 BOOL CToDoCtrl::CanCreateNewTask(TDC_INSERTWHERE nWhere, const CString& sText) const
 {
-	if (!CanCreateNewTask(nWhere))
-		return FALSE;
-	
-	if (sText.IsEmpty())
+	if (!CanCreateNewTask(nWhere) || sText.IsEmpty())
 		return FALSE;
 
 	// are we an archive and should we warn user if we are
@@ -10222,7 +10220,7 @@ BOOL CToDoCtrl::CanEditSelectedTask(const CTDCAttributeMap& mapAttribs) const
 
 BOOL CToDoCtrl::CanEditSelectedTask(TDC_ATTRIBUTE nAttribID, DWORD dwTaskID) const 
 { 
-	if (!GetTaskCount())
+	if (m_taskTree.GetItemCount() == 0)
 		return CanEditTask(0, nAttribID);
 
 	// else
