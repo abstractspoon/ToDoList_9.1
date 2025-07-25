@@ -366,7 +366,7 @@ namespace LoggedTimeUIExtension
 			item.Enabled = ((m_TimeLog.CanAddNewLogEntry || !m_TimeLog.HasTasklistPath) && (appt == null));
 			item.Click += (s, a) => { OnCreateLogEntry(sender, e); };
 
-			item = AddMenuItem(menu, "Modify Log Entry", (Keys.Control | Keys.F2), 7);
+			item = AddMenuItem(menu, "Edit Log Entry", (Keys.Control | Keys.F2), 7);
 			item.Enabled = m_TimeLog.CanModifySelectedLogEntry;
 			item.Click += (s, a) => { OnEditLogEntry(sender, e); };
 
