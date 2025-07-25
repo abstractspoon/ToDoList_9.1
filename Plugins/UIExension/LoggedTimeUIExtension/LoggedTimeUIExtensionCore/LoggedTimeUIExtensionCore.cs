@@ -594,7 +594,8 @@ namespace LoggedTimeUIExtension
 												m_TimeLog.TaskIcons, 
 												m_WorkWeek, 
 												m_TimeLog.DisplayDatesInISO, 
-												attrib);
+												attrib,
+												m_Trans);
 
 			FormsUtil.SetFont(dlg, m_ControlsFont);
 			m_Trans.Translate(dlg);
@@ -643,7 +644,8 @@ namespace LoggedTimeUIExtension
 			var dlg = new EditLoggedEntryDlg(entry, 
 											 m_WorkWeek,
 											 m_TimeLog.DisplayDatesInISO,
-											 (m_TimeLog.ReadOnly || (taskItem == null) || taskItem.Locked));
+											 (m_TimeLog.ReadOnly || (taskItem == null) || taskItem.Locked),
+											 m_Trans);
 
 			FormsUtil.SetFont(dlg, m_ControlsFont);
 			m_Trans.Translate(dlg);
