@@ -66,7 +66,6 @@ public:
 
 	void EnableHeaderTracking(BOOL bAllow = TRUE);
 	BOOL EnableGroupView(BOOL bEnable = TRUE);
-	void EnableTooltipCtrl(BOOL bEnable = TRUE);
 	void EnableSorting(BOOL bEnable = TRUE) { m_bSortingEnabled = bEnable; }
 	void EnableAlternateRowColoring(BOOL bEnable = TRUE);
 	void AllowOffItemClickDeselection(BOOL bAllow = TRUE) { m_bAllowOffItemClickDeslection = bAllow; }
@@ -88,7 +87,7 @@ public:
 	int GetFocusedItem() const;
 	int FindItemFromData(DWORD dwItemData) const;
 	int FindItemFromLabel(CString sLabel, BOOL bExact = TRUE, int nFromIndex = 0) const;
-	BOOL SetTooltipCtrlText(CString sText);
+	BOOL SetTooltipText(CString sText, DWORD dwTipFlags = 0); // TTS_
 	BOOL SetMinItemHeight(int nHeight);
 	int GetMinItemHeight() const { return m_nMinItemHeight; }
 	int GetItemHeight() const { return m_nItemHeight; }
@@ -148,7 +147,6 @@ protected:
 	NMHDR m_nmhdr; // for notification
 	BOOL m_bLastColStretchy;
 	BOOL m_bFirstColStretchy;
-	BOOL m_bTooltipsEnabled;
 	CToolTipCtrl m_ttCtrl;
 	BOOL m_bReadOnly;
 	int m_nItemDropHilite;
