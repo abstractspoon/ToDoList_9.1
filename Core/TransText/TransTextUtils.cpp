@@ -96,7 +96,7 @@ CString TransText::GetFriendlyClass(const CString& sClass, HWND hWndRef)
 		// drop thru
 	}
 	
-	return sClass;
+	return Misc::ToLower(sClass);
 }
 
 CString TransText::GetClassIDName(HWND hWnd)
