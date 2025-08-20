@@ -2174,11 +2174,17 @@ TDC_SET CToDoCtrlData::SetTaskPriority(DWORD dwTaskID, int nPriority, BOOL bOffs
 	if (bOffset)
 	{
 		if (pTDI->nPriority == FM_NOPRIORITY)
-			return SET_NOCHANGE;
-
-		// else
-		nPriority += pTDI->nPriority;
-		nPriority = max(0, min(10, nPriority));
+		{
+			if (nPriority > 0)
+				nPriority = 0; // From 'none' one can only go to 'zero' regardless of the offset amount
+			else
+				nPriority = pTDI->nPriority; // => SET_NOCHANGE
+		}
+		else
+		{
+			nPriority += pTDI->nPriority;
+			nPriority = max(0, min(10, nPriority));
+		}
 	}
 	
 	return EditTaskAttributeT(dwTaskID, pTDI, TDCA_PRIORITY, pTDI->nPriority, nPriority);
@@ -2195,10 +2201,17 @@ TDC_SET CToDoCtrlData::SetTaskRisk(DWORD dwTaskID, int nRisk, BOOL bOffset)
 	if (bOffset)
 	{
 		if (pTDI->nRisk == FM_NORISK)
-			return SET_NOCHANGE;
-
-		nRisk += pTDI->nRisk;
-		nRisk = max(0, min(10, nRisk));
+		{
+			if (nRisk > 0)
+				nRisk = 0; // From 'none' one can only go to 'zero' regardless of the offset amount
+			else
+				nRisk = pTDI->nRisk; // => SET_NOCHANGE
+		}
+		else
+		{
+			nRisk += pTDI->nRisk;
+			nRisk = max(0, min(10, nRisk));
+		}
 	}
 
 	return EditTaskAttributeT(dwTaskID, pTDI, TDCA_RISK, pTDI->nRisk, nRisk);
