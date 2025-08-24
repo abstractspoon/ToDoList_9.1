@@ -828,6 +828,9 @@
     <ClInclude Include="XslFile.h" />
     <ClInclude Include="Zipper.h" />
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="msgs.txt" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
