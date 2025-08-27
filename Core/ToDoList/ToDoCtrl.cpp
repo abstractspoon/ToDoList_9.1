@@ -9997,6 +9997,9 @@ void CToDoCtrl::SetUITheme(const CUIThemeFile& theme)
 
 void CToDoCtrl::SetNumPriorityRiskLevels(int nNumLevels)
 {
+	ASSERT(TDC::IsValidNumPriorityRiskLevels(nNumLevels));
+
+	m_data.SetNumPriorityRiskLevels(nNumLevels);
 	m_ctrlAttributes.SetNumPriorityRiskLevels(nNumLevels);
 }
 
