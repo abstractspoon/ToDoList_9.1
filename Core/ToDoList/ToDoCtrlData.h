@@ -199,8 +199,8 @@ public:
 	TDC_SET SetTaskMetaData(DWORD dwTaskID, const CString& sKey, const CString& sMetaData);
 	
 	TDC_SET SetTaskPercent(DWORD dwTaskID, int nPercent);
-	TDC_SET SetTaskPriority(DWORD dwTaskID, int nPriority, BOOL bOffset = FALSE); // 0-10 (10 is highest)
-	TDC_SET SetTaskRisk(DWORD dwTaskID, int nRisk, BOOL bOffset = FALSE); // 0-10 (10 is highest)
+	TDC_SET SetTaskPriority(DWORD dwTaskID, int nPriority, BOOL bOffset = FALSE);
+	TDC_SET SetTaskRisk(DWORD dwTaskID, int nRisk, BOOL bOffset = FALSE);
 	TDC_SET SetTaskTimeEstimate(DWORD dwTaskID, const TDCTIMEPERIOD& timeEst, BOOL bOffset = FALSE);
 	TDC_SET SetTaskTimeSpent(DWORD dwTaskID, const TDCTIMEPERIOD& timeEst, BOOL bOffset = FALSE);
 	TDC_SET SetTaskCost(DWORD dwTaskID, const TDCCOST& cost, BOOL bOffset = FALSE);
@@ -232,6 +232,7 @@ public:
 
 	inline BOOL HasStyle(TDC_STYLE nStyle) const { return m_styles.IsStyleEnabled(nStyle); }
 	
+	void SetNumPriorityRiskLevels(int nNumLevels) { m_nNumPriorityRiskLevels = nNumLevels; } // for offsetting
 	void SetDefaultCommentsFormat(const CString& format);
 	void SetDefaultTimeUnits(TDC_UNITS nTimeEstUnits, TDC_UNITS nTimeSpentUnits);
 	TDC_UNITS GetDefaultTimeEstimateUnits() const { return m_nDefTimeEstUnits; }
@@ -254,6 +255,7 @@ protected:
 
 	TDC_UNITS m_nDefTimeEstUnits, m_nDefTimeSpentUnits;
 	CTDCAttributeMap m_mapParentAttribs; // inheritable attribs
+	int m_nNumPriorityRiskLevels;
 
 	BOOL m_bUndoRedoing;
 	BOOL m_bUpdateInheritAttrib; // update as changes are made to parents
@@ -336,22 +338,23 @@ protected:
 	BOOL IsValidMoveDestination(const CDWordArray& aTaskIDs, DWORD dwDestParentID) const;
 	BOOL SetTaskModified(DWORD dwTaskID);
 	int GetTaskPosition(const TODOSTRUCTURE* pTDS, BOOL bZeroBased = TRUE) const;
+	BOOL ProcessUndoElement(BOOL bUndo, TDCUNDOELEMENT& srcElement, CArrayUndoElements& aReturnedElms, const CToDoCtrlDataStructure& tdsCopy);
 
 	BOOL TaskHasAttributeValue(const TODOITEM& tdi, TDC_ATTRIBUTE nAttribID, const CString& sText, BOOL bCaseSensitive, BOOL bWholeWord);
 	BOOL GetTaskAttributeValue(const TODOITEM& tdi, TDC_ATTRIBUTE nAttribID, TDCCADATA& data) const;
 
-	// Too dangerous to be public because 'data' is untyped
-	TDC_SET SetTaskAttributeValue(DWORD dwTaskID, TDC_ATTRIBUTE nAttribID, const TDCCADATA& data);
-
-	BOOL ProcessUndoElement(BOOL bUndo, TDCUNDOELEMENT& srcElement, CArrayUndoElements& aReturnedElms, const CToDoCtrlDataStructure& tdsCopy);
 	TDC_SET OffsetTaskDate(DWORD dwTaskID, TDC_DATE nDate, int nAmount, TDC_UNITS nUnits, DWORD dwFlags, BOOL bFitToRecurringScheme);
 	TDC_SET OffsetTaskDate(DWORD dwTaskID, TDC_DATE nDate, int nAmount, TDC_UNITS nUnits, DWORD dwFlags, BOOL bFitToRecurringScheme, CMap<DWORD, DWORD, BOOL, BOOL&>& mapProcessedTasks);
 	TDC_SET OffsetTaskStartAndDueDates(DWORD dwTaskID, const COleDateTime& dtNewStart, TDC_UNITS nUnits);
+	TDC_SET SetTaskPriorityOrRisk(DWORD dwTaskID, BOOL bPriority, int nValue);
+	TDC_SET OffsetTaskPriorityOrRisk(DWORD dwTaskID, BOOL bPriority, int nOffset);
+
+	// Too dangerous to be public because 'data' is untyped
+	TDC_SET SetTaskAttributeValue(DWORD dwTaskID, TDC_ATTRIBUTE nAttribID, const TDCCADATA& data);
 
 	static double CalcDuration(const COleDateTime& dateStart, const COleDateTime& dateDue, TDC_UNITS nUnits);
 	static COleDateTime AddDuration(COleDateTime& dateStart, double dDuration, TDC_UNITS nUnits, BOOL bAllowUpdateStart);
 	static COleDateTime CalcNewDueDate(const COleDateTime& dtCurStart, const COleDateTime& dtCurDue, TDC_UNITS nUnits, COleDateTime& dtNewStart);
-	static BOOL CanEditPriorityRisk(int nValue, int nNoValue, BOOL bOffset);
 
 };
 

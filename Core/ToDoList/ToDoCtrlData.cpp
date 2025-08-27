@@ -93,7 +93,8 @@ CToDoCtrlData::CToDoCtrlData(const CTDCStyleMap& styles, const CTDCCustomAttribD
 	m_bUndoRedoing(FALSE),
 	m_bUpdateInheritAttrib(FALSE),
 	m_nDefTimeEstUnits(TDCU_DAYS),
-	m_nDefTimeSpentUnits(TDCU_DAYS)
+	m_nDefTimeSpentUnits(TDCU_DAYS),
+	m_nNumPriorityRiskLevels(11)
 {
 }
 
@@ -2154,67 +2155,89 @@ TDC_SET CToDoCtrlData::SetTaskRecurrence(DWORD dwTaskID, const TDCRECURRENCE& tr
 	return SET_NOCHANGE;
 }
 
-BOOL CToDoCtrlData::CanEditPriorityRisk(int nValue, int nNoValue, BOOL bOffset)
-{
-	if (bOffset)
-		return ((nValue >= -10) && (nValue <= 10));
-
-	// else
-	return (nValue == nNoValue || (nValue >= 0 && nValue <= 10));
-}
-
+// External
 TDC_SET CToDoCtrlData::SetTaskPriority(DWORD dwTaskID, int nPriority, BOOL bOffset)
 {
-	if (!CanEditPriorityRisk(nPriority, FM_NOPRIORITY, bOffset))
-		return SET_FAILED;
-	
-	TODOITEM* pTDI = NULL;
-	EDIT_GET_TDI(dwTaskID, pTDI);
-
 	if (bOffset)
-	{
-		if (pTDI->nPriority == FM_NOPRIORITY)
-		{
-			if (nPriority > 0)
-				nPriority = 0; // From 'none' one can only go to 'zero' regardless of the offset amount
-			else
-				nPriority = pTDI->nPriority; // => SET_NOCHANGE
-		}
-		else
-		{
-			nPriority += pTDI->nPriority;
-			nPriority = max(0, min(10, nPriority));
-		}
-	}
-	
-	return EditTaskAttributeT(dwTaskID, pTDI, TDCA_PRIORITY, pTDI->nPriority, nPriority);
+		return OffsetTaskPriorityOrRisk(dwTaskID, TRUE, nPriority);
+
+	// else
+	return SetTaskPriorityOrRisk(dwTaskID, TRUE, nPriority);
 }
 
 TDC_SET CToDoCtrlData::SetTaskRisk(DWORD dwTaskID, int nRisk, BOOL bOffset)
 {
-	if (!CanEditPriorityRisk(nRisk, FM_NORISK, bOffset))
+	if (bOffset)
+		return OffsetTaskPriorityOrRisk(dwTaskID, FALSE, nRisk);
+
+	return SetTaskPriorityOrRisk(dwTaskID, FALSE, nRisk);
+}
+
+// Internal
+TDC_SET CToDoCtrlData::SetTaskPriorityOrRisk(DWORD dwTaskID, BOOL bPriority, int nValue)
+{
+	// Sanity check
+	if (!TODOITEM::IsValidPriorityOrRisk(nValue))
 		return SET_FAILED;
-	
+
 	TODOITEM* pTDI = NULL;
 	EDIT_GET_TDI(dwTaskID, pTDI);
 
-	if (bOffset)
+	return EditTaskAttributeT(dwTaskID, 
+							  pTDI, 
+							  (bPriority ? TDCA_PRIORITY : TDCA_RISK),
+							  (bPriority ? pTDI->nPriority : pTDI->nRisk),
+							  nValue);
+}
+
+TDC_SET CToDoCtrlData::OffsetTaskPriorityOrRisk(DWORD dwTaskID, BOOL bPriority, int nOffset)
+{
+	TODOITEM* pTDI = NULL;
+	EDIT_GET_TDI(dwTaskID, pTDI);
+
+	// Weed out some cases where SET_NOCHANGE would be returned
+	// to simplify the later logic
+	if (nOffset == 0)
+		return SET_NOCHANGE;
+
+	int nCurValue = (bPriority ? pTDI->nPriority : pTDI->nRisk);
+	int nMaxValue = (m_nNumPriorityRiskLevels - 1);
+
+	if ((nOffset < 0) && (nCurValue == TDC_NOPRIORITYORISK))
+		return SET_NOCHANGE;
+
+	if ((nOffset > 0) && (nCurValue >= nMaxValue))
+		return SET_NOCHANGE;
+
+	int nNewValue = (nCurValue + nOffset);
+
+	switch (nCurValue)
 	{
-		if (pTDI->nRisk == FM_NORISK)
+	case TDC_NOPRIORITYORISK:
+		ASSERT(nOffset > 0);
+		nNewValue = TDC_MINPRIORITYORISK;	// From <none> one Can only offset to 'min'
+		break;
+
+	case TDC_MINPRIORITYORISK:
+		if (nOffset < 0)
 		{
-			if (nRisk > 0)
-				nRisk = 0; // From 'none' one can only go to 'zero' regardless of the offset amount
-			else
-				nRisk = pTDI->nRisk; // => SET_NOCHANGE
+			nNewValue = TDC_NOPRIORITYORISK;
+			break;
 		}
-		else
-		{
-			nRisk += pTDI->nRisk;
-			nRisk = max(0, min(10, nRisk));
-		}
+		// else fall through to default
+
+	default:
+		nNewValue = max(TDC_MINPRIORITYORISK, min(nMaxValue, nNewValue));
+		break;
 	}
 
-	return EditTaskAttributeT(dwTaskID, pTDI, TDCA_RISK, pTDI->nRisk, nRisk);
+	ASSERT(TODOITEM::IsValidPriorityOrRisk(nNewValue));
+
+	return EditTaskAttributeT(dwTaskID,
+							  pTDI,
+							  (bPriority ? TDCA_PRIORITY : TDCA_RISK),
+							  (bPriority ? pTDI->nPriority : pTDI->nRisk),
+							  nNewValue);
 }
 
 // External
