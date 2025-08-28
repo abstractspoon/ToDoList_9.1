@@ -810,7 +810,7 @@ BOOL CFilteredToDoCtrl::WantAddTaskToTree(const TODOITEM* pTDI, const TODOSTRUCT
 					break;
 
 				default:
-					ASSERT(0);
+					// All the rest are explicit matches on the parent
 					bWantTask = TRUE;
 					break;
 				}
