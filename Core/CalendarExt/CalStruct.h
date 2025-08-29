@@ -220,6 +220,8 @@ class CTaskCalExtensionItemMap : public CTaskCalItemMap
 {
 public:
 	DWORD GetRealTaskID(DWORD dwTaskID) const;
+
+	DWORD FindCustomDate(DWORD dwRealTaskID, const CString& sCustAttribID) const;
 };
 
 /////////////////////////////////////////////////////////////////////////////
