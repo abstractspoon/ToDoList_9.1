@@ -1429,10 +1429,6 @@ BOOL WindowProcEx(HWND hWnd, UINT nMsg, WPARAM wp, LPARAM lp, LRESULT& lr)
 				}
 			}
 		}
-		else
-		{
-			UnhookWindow(hWnd);
-		}
 		break;
 
 	case WM_NCDESTROY:
