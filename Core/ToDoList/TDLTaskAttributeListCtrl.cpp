@@ -1338,6 +1338,11 @@ void CTDLTaskAttributeListCtrl::SetAutoListDataReadOnly(TDC_ATTRIBUTE nAttribID,
 	}
 }
 
+BOOL CTDLTaskAttributeListCtrl::IsAutoListDataReadOnly(TDC_ATTRIBUTE nAttribID) const
+{
+	return m_mapReadOnlyListData.Has(nAttribID);
+}
+
 void CTDLTaskAttributeListCtrl::SetCurrentFolder(const CString& sFolder)
 {
 	m_sCurrentFolder = sFolder;
@@ -2568,7 +2573,7 @@ BOOL CTDLTaskAttributeListCtrl::CheckRecreateCombo(int nRow, CEnCheckComboBox& c
 	case TDCA_ALLOCTO:
 	case TDCA_CATEGORY:
 	case TDCA_TAGS:
-		bWantReadOnly = m_mapReadOnlyListData.Has(nAttribID);
+		bWantReadOnly = IsAutoListDataReadOnly(nAttribID);
 		break;
 
 	default:
@@ -2668,7 +2673,7 @@ void CTDLTaskAttributeListCtrl::PrepareControl(CWnd& ctrl, int nRow, int nCol)
 	m_editBox.ClearMask();
 
 	BOOL bCheckWantMultilineEdit = FALSE;
-	BOOL bReadOnlyList = m_mapReadOnlyListData.Has(nAttribID);
+	BOOL bReadOnlyList = IsAutoListDataReadOnly(nAttribID);
 
 	switch (nAttribID)
 	{
