@@ -541,6 +541,8 @@ public:
 
 	BOOL HookWindow(HWND hWnd, CSubclasser* pSubclasser)
 	{
+		ASSERT(pSubclasser == NULL);
+
 		if (!CDarkModeCtrlBase::HookWindow(hWnd, pSubclasser))
 			return FALSE;
 
@@ -739,9 +741,11 @@ protected:
 	BOOL m_bParentIsCombo;
 
 protected:
-	BOOL HookWindow(HWND hWnd, CSubclassWnd* pWnd)
+	BOOL HookWindow(HWND hWnd, CSubclasser* pSubclasser)
 	{
-		if (!CDarkModeCtrlBase::HookWindow(hWnd))
+		ASSERT(pSubclasser == NULL);
+
+		if (!CDarkModeCtrlBase::HookWindow(hWnd, pSubclasser))
 			return FALSE;
 
 		m_bParentIsCombo = CWinClasses::IsComboBox(::GetParent(hWnd));
