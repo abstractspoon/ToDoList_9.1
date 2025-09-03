@@ -5061,6 +5061,10 @@ void CTDLTaskCtrlBase::GetAttributesAffectedByMod(TDC_ATTRIBUTE nAttribID, CTDCA
 		}
 		break;
 
+	case TDCA_DUETIME:
+		GetAttributesAffectedByMod(TDCA_DUEDATE, mapAttribIDs); // RECURSIVE CALL
+		break;
+
 	case TDCA_STARTDATE: // ----------------------------------------------------------
 		{
 			mapAttribIDs.Add(TDCA_STARTTIME);
@@ -5071,6 +5075,10 @@ void CTDLTaskCtrlBase::GetAttributesAffectedByMod(TDC_ATTRIBUTE nAttribID, CTDCA
 				mapAttribIDs.Add(TDCA_TIMEESTIMATE);
 			}
 		}
+		break;
+
+	case TDCA_STARTTIME:
+		GetAttributesAffectedByMod(TDCA_STARTDATE, mapAttribIDs); // RECURSIVE CALL
 		break;
 
 	case TDCA_DONEDATE: // -----------------------------------------------------------
@@ -5108,6 +5116,10 @@ void CTDLTaskCtrlBase::GetAttributesAffectedByMod(TDC_ATTRIBUTE nAttribID, CTDCA
 				mapAttribIDs.Add(TDCA_STATUS);
 			}
 		}
+		break;
+
+	case TDCA_DONETIME:
+		GetAttributesAffectedByMod(TDCA_DONEDATE, mapAttribIDs); // RECURSIVE CALL
 		break;
 
 	case TDCA_CUSTOMATTRIB_DEFS: // ------------------------------------------------
