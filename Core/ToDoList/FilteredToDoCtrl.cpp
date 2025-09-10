@@ -754,9 +754,10 @@ BOOL CFilteredToDoCtrl::WantAddTaskToTree(const TODOITEM* pTDI, const TODOSTRUCT
 			for (int nRule = 0; (nRule < nNumRules) && !bWantTask; nRule++)
 			{
 				const SEARCHPARAM& rule = pFilter->aRules[nRule];
-								
 				CString sWhatMatched;
-				VERIFY(result.GetWhatMatched(rule.GetAttribute(), m_aCustomAttribDefs, sWhatMatched) && (!sWhatMatched.IsEmpty() || bMultiRule));
+
+				BOOL bWhatMatched = result.GetWhatMatched(rule.GetAttribute(), m_aCustomAttribDefs, sWhatMatched);
+				ASSERT((bWhatMatched && (!sWhatMatched.IsEmpty() || bMultiRule)) || rule.AttributeIs(TDCA_SELECTION));
 
 				switch (rule.GetOperator())
 				{
