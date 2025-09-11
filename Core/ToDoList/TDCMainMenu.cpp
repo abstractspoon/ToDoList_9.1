@@ -592,9 +592,9 @@ void CTDCMainMenu::PrepareEditMenu(CMenu* pMenu, const CFilteredToDoCtrl& tdc, c
 		case ID_EDIT_SETPRIORITY8:
 		case ID_EDIT_SETPRIORITY9:
 		case ID_EDIT_SETPRIORITY10:
-			if (bVisibleColsEditsOnly)
+			if (bVisibleColsEditsOnly && !tdc.IsColumnOrEditFieldShowing(TDCC_PRIORITY, TDCA_PRIORITY))
 			{
-				bDelete = !tdc.IsColumnOrEditFieldShowing(TDCC_PRIORITY, TDCA_PRIORITY);
+				bDelete = TRUE;
 			}
 			else
 			{
