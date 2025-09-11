@@ -239,6 +239,8 @@ void CRichEditBaseCtrl::PreSubclassWindow()
 void CRichEditBaseCtrl::Initialise()
 {
 	SetOLECallback(&m_callback);
+	SetMargins(m_rMargins);
+
 	EnableInlineSpellChecking(TRUE);
 	EnableAutoFontChanging(FALSE);
 	EnableAutoUrlDetection();
@@ -998,10 +1000,32 @@ void CRichEditBaseCtrl::SetMargins(LPCRECT pMargins)
 	else
 		m_rMargins = *pMargins;
 
+	// Make sure we're big enough for our margins
+	// else SetRect() will fail
 	CRect rClient;
 	GetClientRect(rClient);
 
-	rClient -= m_rMargins;
+	int nCxMargin = (m_rMargins.left + m_rMargins.right);
+	int nCyMargin = (m_rMargins.top + m_rMargins.bottom);
+
+	if ((nCxMargin > 0) || (nCyMargin > 0))
+	{
+		CRect rRequired(rClient);
+
+		if (rRequired.right <= nCxMargin)
+			rRequired.right = (nCxMargin + 2);
+
+		if (rRequired.bottom <= nCyMargin)
+			rRequired.bottom = (nCyMargin + 2);
+
+		if (rRequired != rClient)
+		{
+			MoveWindow(rRequired);
+			rClient = rRequired;
+		}
+
+		rClient -= m_rMargins;
+	}
 	SetRect(rClient);
 }
 
