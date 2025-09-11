@@ -2347,19 +2347,41 @@ void CTDLTaskCtrlBase::DrawCommentsText(CDC* pDC, const CRect& rRow, const CRect
 
 	if (HasStyle(TDCS_SHOWCOMMENTSINLIST))
 	{
-		CString sComments(pTDI->sComments); // shared reference
+		// Note: We want to avoid modifying this reference
+		// until we absolutely know that we have to
+		CString sComments(pTDI->sComments);
 
 		int nDrawLength = sComments.GetLength(); // All
-		BOOL bNeedReplace = FALSE;
+		int nReplaceFrom = 0;
+
+		// Our definition of whitespace
+		const CString LFCR(_T("\n\r"));
+		const CString LFCRTAB(_T("\n\r\t"));
 
 		if (HasStyle(TDCS_SHOWFIRSTCOMMENTLINEINLIST))
 		{
-			nDrawLength = sComments.FindOneOf(_T("\n\r"));
-			bNeedReplace = (sComments.Find('\t') < nDrawLength);
+			nDrawLength = sComments.FindOneOf(LFCR);
+			nReplaceFrom = sComments.Find('\t');
 		}
 		else
 		{
-			int nFind = pTDI->sComments.FindOneOf(_T("\n\r\t"));
+			// Find the first whitespace character after skipping leading whitespace
+			int nFind = -1;
+			BOOL bLeading = TRUE;
+
+			for (int nChar = 0; nChar < sComments.GetLength(); nChar++)
+			{
+				if (LFCRTAB.Find(sComments[nChar]) == -1)
+				{
+					// non-whitespace
+					bLeading = FALSE;
+				}
+				else if (!bLeading)
+				{
+					nFind = nChar;
+					break;
+				}
+			}
 
 			if (nFind > 0)
 			{
@@ -2367,24 +2389,19 @@ void CTDLTaskCtrlBase::DrawCommentsText(CDC* pDC, const CRect& rRow, const CRect
 				int nMaxDraw = ((int)(rComments.Width() / m_fAveCharWidth) * 2);
 				
 				nDrawLength = min(nDrawLength, nMaxDraw);
-				bNeedReplace = (nFind < nDrawLength);
+				nReplaceFrom = nFind;
 			}
 		}
+		ASSERT(sComments == pTDI->sComments); // sanity check
 
-		if (bNeedReplace)
+		if ((nReplaceFrom > 0) && (nReplaceFrom < nDrawLength))
 		{
 			LPTSTR szComments = sComments.GetBuffer(nDrawLength);
 
-			for (int nChar = 0; nChar < nDrawLength; nChar++)
+			for (int nChar = nReplaceFrom; nChar < nDrawLength; nChar++)
 			{
-				switch (szComments[nChar])
-				{
-				case '\r':
-				case '\n':
-				case '\t':
+				if (LFCRTAB.Find(sComments[nChar]) != -1)
 					szComments[nChar] = ' ';
-					break;
-				}
 			}
 
 			sComments.ReleaseBuffer(nDrawLength);
@@ -3692,7 +3709,13 @@ LRESULT CTDLTaskCtrlBase::OnHeaderCustomDraw(NMCUSTOMDRAW* pNMCD)
 		
 	case CDDS_ITEMPREPAINT:
 		{
-			// don't draw columns having min width
+			// don't draw columns having min width unless they
+			// are the current right-clicked item
+			int nCol = (int)pNMCD->dwItemSpec;
+
+			if (nCol == m_nHeaderContextMenuItem)
+				return CDRF_NOTIFYPOSTPAINT;
+
 			CRect rItem(pNMCD->rc);
 
 			if (rItem.Width() > MIN_COL_WIDTH)
@@ -3709,7 +3732,7 @@ LRESULT CTDLTaskCtrlBase::OnHeaderCustomDraw(NMCUSTOMDRAW* pNMCD)
 			int nCol = (int)pNMCD->dwItemSpec;
 			BOOL bContextItem = (nCol == m_nHeaderContextMenuItem);
 
-			// Custom rendering for context menu item
+			// Custom rendering for context menu item always
 			if (bContextItem)
 			{
 				if (CThemed::AreControlsThemed())
@@ -3725,7 +3748,7 @@ LRESULT CTDLTaskCtrlBase::OnHeaderCustomDraw(NMCUSTOMDRAW* pNMCD)
 
 			if (rItem.Width() > MIN_COL_WIDTH)
 			{
-				// draw sort direction
+				// Sort direction
 				TDC_COLUMN nColID = (TDC_COLUMN)pNMCD->lItemlParam;
 
 				if (nColID == m_nSortColID)
@@ -3734,7 +3757,7 @@ LRESULT CTDLTaskCtrlBase::OnHeaderCustomDraw(NMCUSTOMDRAW* pNMCD)
 					GetColumnHeaderCtrl(nColID).DrawItemSortArrow(pDC, nCol, bUp);
 				}
 
-				// Draw image
+				// Column icon
 				const TDCCOLUMN* pTDCC = GetColumn(nColID);
 				int nTextAlign = DT_LEFT;
 
@@ -3760,7 +3783,7 @@ LRESULT CTDLTaskCtrlBase::OnHeaderCustomDraw(NMCUSTOMDRAW* pNMCD)
 					nTextAlign = pDef->nTextAlignment;
 				}
 
-				// Handle text for RTL or context column headers
+				// Handle text for context column headers
 				if (bContextItem)
 				{
 					CEnString sColumn(GetColumnHeaderCtrl(nColID).GetItemText(nCol));
@@ -3768,9 +3791,11 @@ LRESULT CTDLTaskCtrlBase::OnHeaderCustomDraw(NMCUSTOMDRAW* pNMCD)
 					rItem.DeflateRect(3, 0);
 					sColumn.FormatDC(pDC, rItem.Width(), ES_END);
 
-					DrawColumnText(pDC, sColumn, rItem, nTextAlign, GetSysColor(COLOR_WINDOWTEXT));
+					DrawColumnText(pDC, sColumn, rItem, nTextAlign, GetSysColor(COLOR_BTNTEXT));
 					return CDRF_SKIPDEFAULT;
 				}
+
+				// else default drawing
 			}
 		}
 		break;

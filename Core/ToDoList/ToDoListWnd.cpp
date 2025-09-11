@@ -11957,10 +11957,12 @@ LRESULT CToDoListWnd::OnSelchangeFilter(WPARAM wp, LPARAM lp)
 
 	m_filterBar.GetFilter(filter, sCustom, dwCustomFlags);
 
-	// Refresh filter controls if we've switched 
-	// from a custom to default filter or vice versa
+	// Refresh filter controls if we've switched from a 
+	// 'custom' or 'selected' to default filter or vice versa
 	const CFilteredToDoCtrl& tdc = GetToDoCtrl();
-	BOOL bUpdateFilterCtrls = Misc::StatesDiffer(sCustom.IsEmpty(), !tdc.HasAdvancedFilter());
+
+	BOOL bUpdateFilterCtrls = (Misc::StatesDiffer(sCustom.IsEmpty(), !tdc.HasAdvancedFilter()) ||
+							   Misc::StatesDiffer((filter.nShow == FS_SELECTED), (tdc.GetFilter() == FS_SELECTED)));
 
 	OnChangeFilter(filter, sCustom, dwCustomFlags, bUpdateFilterCtrls);
 

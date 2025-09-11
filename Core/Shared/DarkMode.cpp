@@ -422,6 +422,23 @@ DWORD GetColorOrBrush(COLORREF color, BOOL bColor)
 	return (DWORD)hbr;
 }
 
+BOOL HasBrush(HBRUSH hBrush)
+{
+	POSITION pos = s_mapBrushes.GetStartPosition();
+	HBRUSH hbr = NULL;
+	COLORREF color = CLR_NONE;
+
+	while (pos)
+	{
+		s_mapBrushes.GetNextAssoc(pos, color, hbr);
+
+		if (hBrush == hbr)
+			return TRUE;
+	}
+
+	return FALSE;
+}
+
 //////////////////////////////////////////////////////////////////////
 
 class CDarkModeCtrlBase : public CSubclassWnd
@@ -1503,19 +1520,39 @@ return TrueCallWindowProc(lpPrevWndFunc, hWnd, nMsg, wp, lp)
 		}
 		break;
 
+	case WM_CTLCOLORBTN:
+	case WM_CTLCOLORDLG:
 	case WM_CTLCOLOREDIT:
 	case WM_CTLCOLORLISTBOX:
 	case WM_CTLCOLORSTATIC:
+		{
+			// Always do default first to allow custom hooking
+			LRESULT lrTrue = TrueCallWindowProc(lpPrevWndFunc, hWnd, nMsg, wp, lp);
+
+			// Only do our own colour overriding if the returned brush 
+			// is NOT one of 'our' custom brushes, else we assume that 
+			// the returned brush can just be returned as-is
+			if (!HasBrush((HBRUSH)lrTrue))
+			{
+				LRESULT lr = 0;
+
+				if (WindowProcEx(hWnd, nMsg, wp, lp, lr))
+					return lr;
+			}
+
+			// all else
+			return lrTrue;
+		}
+		break;
+
 	case WM_INITDIALOG:
 		{
-			// Always do default first to allow CAutoComboBox hooking
-			// and dialog initialisation
+			// Always do default first to allow dialog initialisation
 			LRESULT lrTrue = TrueCallWindowProc(lpPrevWndFunc, hWnd, nMsg, wp, lp), lr = 0;
 
 			if (WindowProcEx(hWnd, nMsg, wp, lp, lr))
 				return lr;
 
-			// else
 			return lrTrue;
 		}
 		break;
