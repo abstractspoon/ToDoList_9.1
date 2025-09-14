@@ -1045,9 +1045,9 @@ void CRichEditBaseCtrl::OnPaint()
 	//
 	// The richedit overwrites the top and bottom margins with a
 	// portion of the content instead of rendering them with the 
-	// approporiate background colour. So we have to do it ourselves.
+	// appropriate background colour. So we have to do it ourselves.
 	//
-	if (m_bHasTables && (COSVersion() >= OSV_WIN10) &&  (m_rMargins.top > 0) || (m_rMargins.bottom > 0))
+	if (m_bHasTables && (COSVersion() >= OSV_WIN10) && (m_rMargins.top > 0) || (m_rMargins.bottom > 0))
 	{
 		CPaintDC dc(this);
 
