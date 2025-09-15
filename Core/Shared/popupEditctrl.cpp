@@ -152,7 +152,7 @@ LRESULT CPopupEditCtrl::OnPECShow(WPARAM wp, LPARAM /*lp*/)
 {
 	Reset();
 
-	if (wp && !ShowSpinBuddy(TRUE))
+	if (!ShowSpinBuddy(TRUE) && wp)
 	{
 		// Prevent any window scrolling except ourselves 
 		// if we have a vertical scrollbar
