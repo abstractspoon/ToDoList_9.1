@@ -3716,8 +3716,8 @@ void CTabbedToDoCtrl::SetModified(const CTDCAttributeMap& mapAttribIDs, const CD
 
 void CTabbedToDoCtrl::UpdateListView(const CTDCAttributeMap& mapAttribIDs, const CDWordArray& aModTaskIDs, BOOL bAllowResort)
 {
-	// Don't do anything if we are not active and we are waiting
-	// for a full task update
+	// Don't do anything if we are not active and we are 
+	// already needing a full task update
 	VIEWDATA* pVData = GetViewData(FTCV_TASKLIST);
 	BOOL bInListView = InListView();
 
