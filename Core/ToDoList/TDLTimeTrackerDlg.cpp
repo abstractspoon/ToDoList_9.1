@@ -13,6 +13,7 @@
 #include "..\shared\localizer.h"
 #include "..\shared\mapex.h"
 #include "..\shared\Misc.h"
+#include "..\shared\ShortcutManager.h"
 
 #include "..\3rdparty\XNamedColors.h"
 
@@ -56,6 +57,7 @@ CTDLTimeTrackerDlg::~CTDLTimeTrackerDlg()
 void CTDLTimeTrackerDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
+
 	DDX_Control(pDX, IDC_TASKLISTS, m_cbTasklists);
 	DDX_Control(pDX, IDC_TASKS, m_cbTasks);
 	DDX_Control(pDX, IDC_STARTSTOP, m_btnStart);
@@ -708,13 +710,18 @@ void CTDLTimeTrackerDlg::UpdatePlayButton(BOOL bCheckVisibility)
 	{
 		BOOL bTracking = IsTrackingSelectedTasklistAndTask();
 
+		CEnString sTooltip(bTracking ? IDS_STOP_TRACKING : IDS_START_TRACKING);
+
+		if (m_dwStartStopShortcut)
+			sTooltip += Misc::Format(_T(" (%s)"), CShortcutManager::GetShortcutText(m_dwStartStopShortcut));
+
+		m_btnStart.SetTooltip(sTooltip);
 		m_btnStart.SetIcon(m_ilBtns.ExtractIcon(bTracking ? BTN_STOPENABLED : BTN_STARTENABLED));
-		m_btnStart.SetTooltip(CEnString(bTracking ? IDS_STOP_TRACKING : IDS_START_TRACKING));
 	}
 	else
 	{
-		m_btnStart.SetIcon(m_ilBtns.ExtractIcon(BTN_STARTDISABLED));
 		m_btnStart.SetTooltip(NULL);
+		m_btnStart.SetIcon(m_ilBtns.ExtractIcon(BTN_STARTDISABLED));
 	}
 
 	m_btnStart.EnableWindow(bEnable);
