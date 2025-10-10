@@ -22,6 +22,7 @@ public:
 
 	DWORD GetSelectedTaskID() const;
 	BOOL IsSelectedTask(DWORD dwTaskID) const;
+	CString GetSelectedTaskPath(BOOL bIncFilename = TRUE) const;
 
 	void ResetContent();
 	int Rebuild(const TRACKTASKLIST* pTTL);

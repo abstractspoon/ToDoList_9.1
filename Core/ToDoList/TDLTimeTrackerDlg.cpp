@@ -1040,7 +1040,8 @@ BOOL CTDLTimeTrackerDlg::OnToolTipNotify(UINT /*id*/, NMHDR* pNMHDR, LRESULT* /*
 		break;
 		
 	case IDC_TASKS:
-		sTooltip = GetSelectedItem(m_cbTasks);
+		sTooltip = m_cbTasks.GetSelectedTaskPath();
+		sTooltip.Replace(_T("\\"), _T(" \\ "));
 		break;
 
 	case IDC_GOTOTASKLIST:
