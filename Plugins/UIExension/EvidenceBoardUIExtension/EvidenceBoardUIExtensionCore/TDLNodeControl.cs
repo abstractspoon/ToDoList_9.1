@@ -474,6 +474,11 @@ namespace EvidenceBoardUIExtension
 		{
 			switch (type)
 			{
+			case UIExtension.UpdateType.All:
+				UpdateBackgroundImage(tasks);
+				UpdateTaskAttributes(tasks, true);
+				break;
+
 			case UIExtension.UpdateType.Edit:
 			case UIExtension.UpdateType.New:
 				UpdateTaskAttributes(tasks, false);
@@ -483,11 +488,6 @@ namespace EvidenceBoardUIExtension
 				ClearSelection();
 				UpdateTaskAttributes(tasks, true);
 				RecalcLayout();
-				break;
-
-			case UIExtension.UpdateType.All:
-				UpdateBackgroundImage(tasks);
-				UpdateTaskAttributes(tasks, true);
 				break;
 
 			case UIExtension.UpdateType.Unknown:
@@ -1002,7 +1002,11 @@ namespace EvidenceBoardUIExtension
 
 		private void UpdateTaskAttributes(TaskList tasks, bool rebuild)
 		{
-			BaseNode rootNode = base.RootNode;
+			// Cache and clear selection without notifying parent
+			var selTaskIds = SelectedNodeIds.ToList();
+			SelectNodes(new List<uint>());
+
+			var rootNode = base.RootNode;
 
 			if (rebuild)
 			{
@@ -1055,7 +1059,9 @@ namespace EvidenceBoardUIExtension
 				}
 			}
 
-			Invalidate();
+			// Restore selection after removing invalid Ids
+			selTaskIds.RemoveAll(t => !m_TaskItems.Keys.Contains(t));
+			SelectNodes(selTaskIds, true);
 		}
 
 		public IEnumerable<string> UserLinkTypes
