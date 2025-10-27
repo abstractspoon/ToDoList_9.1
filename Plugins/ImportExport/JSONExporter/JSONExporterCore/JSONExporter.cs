@@ -32,11 +32,11 @@ namespace JSONExporterPlugin
 							 string reportDate,
 							 Translator trans)
         {
+			JObject jOutput = null;
+
 			if (srcTasks.Count == 1)
 			{
-				JObject jTasklist = ExportTasklist(srcTasks[0], reportTitle, reportDate, trans);
-
-				return jTasklist.ToString();
+				jOutput = ExportTasklist(srcTasks[0], reportTitle, reportDate, trans);
 			}
 			else
 			{
@@ -51,14 +51,16 @@ namespace JSONExporterPlugin
 					jTasklists.Add(jTasklist);
 				}
 
-				JObject jRoot = new JObject();
+				jOutput = new JObject();
 
-				jRoot.Add(new JProperty(trans.Translate("Report Name", Translator.Type.Text), reportTitle));
-				jRoot.Add(new JProperty(trans.Translate("Report Date", Translator.Type.Text), reportDate));
-				jRoot.Add(new JProperty(trans.Translate("Tasklists", Translator.Type.Text), jTasklists));
-
-				return jRoot.ToString();
+				jOutput.Add(new JProperty(trans.Translate("Report Name", Translator.Type.Text), reportTitle));
+				jOutput.Add(new JProperty(trans.Translate("Report Date", Translator.Type.Text), reportDate));
+				jOutput.Add(new JProperty(trans.Translate("Tasklists", Translator.Type.Text), jTasklists));
 			}
+
+			return jOutput.ToString()
+						  .Replace("\\\\", "/")
+						  .Replace("\\n", " ");
 		}
 
 		public JObject ExportTasklist(TaskList tasklist,
