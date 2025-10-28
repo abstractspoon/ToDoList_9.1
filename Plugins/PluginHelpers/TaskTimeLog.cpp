@@ -19,7 +19,22 @@ using namespace Abstractspoon::Tdl::PluginHelpers;
 
 const CString EMPTY_STR;
 
+const LPCWSTR LOG_LOAD_ERR = L"The log file could not be loaded.";
+const LPCWSTR LOG_SAVE_ERR = L"The log file could not be updated.";
+const LPCWSTR LOG_ERR_SUGGEST = L"Please ensure that the file is not already open for editing and \n"
+								L"that you have the correct permissions and then try again.";
+
 ////////////////////////////////////////////////////////////////////////////////////////////////
+
+TaskTimeLog::TaskTimeLog() : m_Trans(nullptr)
+{
+}
+
+TaskTimeLog::TaskTimeLog(Translator^ trans) : m_Trans(trans)
+{
+	if (m_Trans != nullptr)
+		m_Trans->InitialiseLocalizer();
+}
 
 List<TaskTimeLogEntry^>^ TaskTimeLog::LoadEntries(String^ tasklistPath)
 {
@@ -88,6 +103,7 @@ bool TaskTimeLog::SaveEntries(String^ tasklistPath, List<TaskTimeLogEntry^>^ log
 
 	String^ logFilePath = GetLogPath(tasklistPath, taskId);
 
+	// Note: For now we preserve the existing header 
 	return (CTDCTaskTimeLog::SaveLogFile(MS(logFilePath), aLogEntries, FALSE) != FALSE);
 }
 
@@ -99,15 +115,16 @@ bool TaskTimeLog::AddEntry(String^ tasklistPath, TaskTimeLogEntry^ logEntry, boo
 	return (CTDCTaskTimeLog(MS(tasklistPath)).LogTime(li, logSeparately) != FALSE);
 }
 
-String^ TaskTimeLog::FormatLogAccessError(Translator^ trans, bool loading)
+String^ TaskTimeLog::FormatLogAccessError(bool loading)
 {
-	String^ part1 = trans->Translate(loading ?
-									 "The log file could not be loaded." :
-									 "The log file could not be updated.",
-									 Translator::Type::Text);
-	String^ part2 = trans->Translate("Please ensure that the file is not already open for editing and \n"
-									 "that you have the correct permissions and then try again.",
-									 Translator::Type::Text);
+	String^ part1 = gcnew String(loading ? LOG_LOAD_ERR : LOG_SAVE_ERR);
+	String^ part2 = gcnew String(LOG_ERR_SUGGEST);
+
+	if (m_Trans)
+	{
+		part1 = m_Trans->Translate(part1, Translator::Type::Text);
+		part2 = m_Trans->Translate(part2, Translator::Type::Text);
+	}
 
 	return String::Format(L"{0}\n\n{1}", part1, part2);
 }
