@@ -378,7 +378,7 @@ BOOL CTDCTaskTimeLog::LogTime(DWORD dwTaskID, LPCTSTR szTaskTitle, LPCTSTR szTas
 	li.sComment = sComment;
 	li.sPath = szTaskPath;
 	li.sPerson = Misc::GetUserName();
-	li.sType = CEnString(bTracked ? _T("Tracked")/*IDS_LOG_TYPETRACKED*/ : _T("Adjusted")/*IDS_LOG_TYPEADJUSTED*/);
+	li.sType = CEnString(bTracked ? IDS_LOG_TYPETRACKED : IDS_LOG_TYPEADJUSTED);
 	li.dHours = dHours;
 	li.dtTo = dtWhen;
 	li.dtFrom = dtWhen;
@@ -479,18 +479,18 @@ CString CTDCTaskTimeLog::GetLatestColumnHeader() const // always the latest vers
 	CString sColumnHeader;
 
 	sColumnHeader.Format(sRowFormat,
-						 CEnString(_T("Task ID")/*IDS_LOG_TASKID*/),
-						 CEnString(_T("Title")/*IDS_LOG_TASKTITLE*/),
-						 CEnString(_T("User ID")/*IDS_LOG_USERID*/),
-						 CEnString(_T("Start Date")/*IDS_LOG_STARTDATE*/),
-						 CEnString(_T("Start Time")/*IDS_LOG_STARTTIME*/),
-						 CEnString(_T("End Date")/*IDS_LOG_ENDDATE*/),
-						 CEnString(_T("End Time")/*IDS_LOG_ENDTIME*/),
-						 CEnString(_T("Time Spent (Hrs)")/*IDS_LOG_TIMESPENT*/),
-						 CEnString(_T("Comment")/*IDS_LOG_COMMENT*/),
-						 CEnString(_T("Type")/*IDS_LOG_TYPE*/),
-						 CEnString(_T("Path")/*IDS_LOG_PATH*/),
-						 CEnString(_T("Color")/*IDS_LOG_ALTCOLOR)*/));
+						 CEnString(IDS_LOG_TASKID),
+						 CEnString(IDS_LOG_TASKTITLE),
+						 CEnString(IDS_LOG_USERID),
+						 CEnString(IDS_LOG_STARTDATE),
+						 CEnString(IDS_LOG_STARTTIME),
+						 CEnString(IDS_LOG_ENDDATE),
+						 CEnString(IDS_LOG_ENDTIME),
+						 CEnString(IDS_LOG_TIMESPENT),
+						 CEnString(IDS_LOG_COMMENT),
+						 CEnString(IDS_LOG_TYPE),
+						 CEnString(IDS_LOG_PATH),
+						 CEnString(IDS_LOG_ALTCOLOR));
 	
 	return sColumnHeader;
 }

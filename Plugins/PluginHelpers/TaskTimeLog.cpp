@@ -43,6 +43,9 @@ List<TaskTimeLogEntry^>^ TaskTimeLog::LoadEntries(String^ tasklistPath)
 
 List<TaskTimeLogEntry^>^ TaskTimeLog::LoadEntries(String^ tasklistPath, UInt32 taskId)
 {
+	// Point any resource loading to our local copies
+	AFX_MANAGE_STATE(AfxGetStaticModuleState());
+
 	String^ logFilePath = GetLogPath(tasklistPath, taskId);
 	CTaskTimeLogItemArray aLogEntries;
 	CString sUnused;
@@ -90,6 +93,9 @@ bool TaskTimeLog::SaveEntries(String^ tasklistPath, List<TaskTimeLogEntry^>^ log
 
 bool TaskTimeLog::SaveEntries(String^ tasklistPath, List<TaskTimeLogEntry^>^ logEntries, UInt32 taskId)
 {
+	// Point any resource loading to our local copies
+	AFX_MANAGE_STATE(AfxGetStaticModuleState());
+
 	CTaskTimeLogItemArray aLogEntries;
 	aLogEntries.SetSize(logEntries->Count);
 
@@ -109,6 +115,9 @@ bool TaskTimeLog::SaveEntries(String^ tasklistPath, List<TaskTimeLogEntry^>^ log
 
 bool TaskTimeLog::AddEntry(String^ tasklistPath, TaskTimeLogEntry^ logEntry, bool logSeparately)
 {
+	// Point any resource loading to our local copies
+	AFX_MANAGE_STATE(AfxGetStaticModuleState());
+
 	TASKTIMELOGITEM li;
 	Copy(logEntry, li);
 
