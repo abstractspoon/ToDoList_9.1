@@ -109,7 +109,7 @@ bool TaskTimeLog::SaveEntries(String^ tasklistPath, List<TaskTimeLogEntry^>^ log
 
 	String^ logFilePath = GetLogPath(tasklistPath, taskId);
 
-	// Note: For now we preserve the existing header 
+	// Note: We don't preserve the existing header 
 	return (CTDCTaskTimeLog::SaveLogFile(MS(logFilePath), aLogEntries, FALSE) != FALSE);
 }
 
