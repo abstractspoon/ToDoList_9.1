@@ -134,7 +134,6 @@ protected:
 	void HighlightWord(BOOL bHighlight = TRUE);
 	BOOL InitDictionary(const CString& sDict);
 	void UpdateButtonStates();
-	void UpdateOKCancelLabels();
 
 	CString GetItemText(UINT nIDItem, const CString& sDefault = _T(""));
 

@@ -211,9 +211,9 @@ void CSpellCheckDlg::SetSpellCheck(ISpellCheck* pSpellCheck)
 		m_reText.SetWindowText(m_sText);
 		m_lbSuggestions.ResetContent();
 
-		UpdateOKCancelLabels();
-
+		UpdateButtonStates();
 		UpdateData(FALSE);
+
 		StartChecking();
 	}
 }
@@ -406,7 +406,6 @@ BOOL CSpellCheckDlg::OnInitDialog()
 	}
 
 	UpdateButtonStates();
-	UpdateOKCancelLabels();
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 				  // EXCEPTION: OCX Property Pages should return FALSE
@@ -455,21 +454,15 @@ BOOL CSpellCheckDlg::StartChecking(CHECKFROM nFrom)
 void CSpellCheckDlg::UpdateButtonStates()
 {
 	BOOL bInit = IsInitialized();
+	BOOL bShowOK = (bInit && (m_pSpellCheck == &m_reSpellCheck));
 
 	GetDlgItem(IDC_SCD_REPLACE)->EnableWindow(bInit && !m_sMisspeltWord.IsEmpty());
 	GetDlgItem(IDC_SCD_NEXT)->EnableWindow(bInit);
 	GetDlgItem(IDC_SCD_RESTART)->EnableWindow(bInit);
 
-	GetDlgItem(IDOK)->EnableWindow(bInit && (m_pSpellCheck == &m_reSpellCheck));
-}
-
-void CSpellCheckDlg::UpdateOKCancelLabels()
-{
-	BOOL bInit = IsInitialized();
-	BOOL bShowOK = (bInit && (m_pSpellCheck == &m_reSpellCheck));
-
-	GetDlgItem(IDOK)->EnableWindow(bShowOK);
+	// OK, Cancel and Close
 	GetDlgItem(IDOK)->ShowWindow(bShowOK ? SW_SHOW : SW_HIDE);
+	GetDlgItem(IDOK)->EnableWindow(bShowOK);
 
 	CEnString sCancelText(bShowOK ? BTN_CANCEL : BTN_CLOSE);
 	sCancelText.Translate();
