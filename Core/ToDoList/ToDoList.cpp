@@ -1023,11 +1023,10 @@ BOOL CToDoListApp::InitPreferences(CEnCommandLineInfo& cmdInfo)
 		SetPreferences(bUseIni, sIniPath, FALSE);
 		
 		// initialize prefs to defaults
-		CPreferencesDlg().InitializePreferences();
+		CPreferences prefs;
+		CPreferencesDlg().SavePreferences(prefs, _T("Preferences"));
 
 		// Save language choice 
-		CPreferences prefs;
-
 		FileMisc::MakeRelativePath(m_sLanguageFile, FileMisc::GetAppFolder(), FALSE);
 		prefs.WriteProfileString(_T("Preferences"), _T("LanguageFile"), m_sLanguageFile);
 		
@@ -1260,6 +1259,9 @@ void CToDoListApp::UpgradePreferences(CPreferences& prefs, LPCTSTR szPrevVer)
 			}
 		}
 	}
+
+	// Upgrade user prefs storage to latest format
+	CPreferencesDlg().SavePreferences(prefs, _T("Preferences"));
 }
 
 int CToDoListApp::DoMessageBox(LPCTSTR lpszPrompt, UINT nType, UINT /*nIDPrompt*/) 
