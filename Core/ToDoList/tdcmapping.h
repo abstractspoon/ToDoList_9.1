@@ -208,7 +208,7 @@ namespace TDC
 		}
 		
 		// handle custom columns
-		if (nColumn >= TDCC_CUSTOMCOLUMN_FIRST && nColumn < TDCC_CUSTOMCOLUMN_LAST)
+		if (nColumn >= TDCC_CUSTOMCOLUMN_FIRST && nColumn <= TDCC_CUSTOMCOLUMN_LAST)
 		{
 			return (ID_SORTBY_CUSTOMCOLUMN_FIRST + (nColumn - TDCC_CUSTOMCOLUMN_FIRST));
 		}
@@ -326,7 +326,7 @@ namespace TDC
 		}
 		
 		// handle custom columns
-		if (nColumn >= TDCC_CUSTOMCOLUMN_FIRST && nColumn < TDCC_CUSTOMCOLUMN_LAST)
+		if (nColumn >= TDCC_CUSTOMCOLUMN_FIRST && nColumn <= TDCC_CUSTOMCOLUMN_LAST)
 		{
 			return (TDC_ATTRIBUTE)(TDCA_CUSTOMATTRIB_FIRST + (nColumn - TDCC_CUSTOMCOLUMN_FIRST));
 		}
@@ -582,7 +582,7 @@ namespace TDC
 			return IUI_EDIT;
 
 		default: // handle custom attrib
-			if ((nAttribID >= TDCA_CUSTOMATTRIB_FIRST) && (nAttribID < TDCA_CUSTOMATTRIB_LAST))
+			if ((nAttribID >= TDCA_CUSTOMATTRIB_FIRST) && (nAttribID <= TDCA_CUSTOMATTRIB_LAST))
 				return IUI_EDIT;
 		}
 
