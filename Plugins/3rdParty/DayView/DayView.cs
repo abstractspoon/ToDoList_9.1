@@ -939,6 +939,9 @@ namespace Calendar
 			if (Height < HeaderHeight)
 				return;
 
+			// Preserve 'end of scroll' where possible
+			bool scrollToBottom = (vscroll.Value >= (vscroll.Maximum - vscroll.LargeChange));
+
 			// Auto-calculate best 'hour' height
 			int availHeight = (Height - HeaderHeight);
 			slotHeight = ((availHeight / (VisibleHours * slotsPerHour)) + 1);
@@ -957,7 +960,7 @@ namespace Calendar
 				vscroll.Maximum = (oneHourHeight * VisibleHours) + 1;
 				vscroll.LargeChange = availHeight;
 
-				if (vscroll.Value > (vscroll.Maximum - vscroll.LargeChange))
+				if (scrollToBottom)
 					vscroll.Value = (vscroll.Maximum - vscroll.LargeChange);
 			}
 			else
