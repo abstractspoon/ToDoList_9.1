@@ -230,8 +230,15 @@ namespace LoggedTimeUIExtension
 
 				foreach (var entry in logEntries)
 				{
-					// If the entry bridges midnight, split it into 2
-					if (entry.To.Date > entry.From.Date)
+					// 'To' date/time should be greater than 'From' date/time
+					// 'To' date should be same as 'From' date OR the next day
+					Debug.Assert(entry.To > entry.From);
+					Debug.Assert((entry.To.Date == entry.From.Date) ||
+								(entry.To.Date == entry.From.Date.AddDays(1.0)));
+
+					// If the entry spans midnight we split it into 2
+					if ((entry.To.Date > entry.From.Date) && 
+						(entry.To.TimeOfDay.Ticks > 0))
 					{
 						var dates = new Calendar.AppointmentDates();
 
