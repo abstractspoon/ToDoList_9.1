@@ -204,15 +204,14 @@ CToDoListWnd::IDLETASKS::IDLETASKS(CToDoListWnd& tdl)
 {
 }
 
-void CToDoListWnd::IDLETASKS::UpdateStatusBar(const CTDCAttributeMap& mapAttrib)
+void CToDoListWnd::IDLETASKS::UpdateStatusBar(const CTDCAttributeMap& mapAttribIDs)
 {
-	if (mapAttrib.Has(TDCA_ALL))
+	if (!mapAttribIDs.MatchAll(m_mapStatusBarAttrib))
 	{
-		m_mapStatusBarAttrib.Set(TDCA_ALL);
-	}
-	else if (!m_mapStatusBarAttrib.Has(TDCA_ALL))
-	{
-		m_mapStatusBarAttrib.Append(mapAttrib);
+		if (mapAttribIDs.Has(TDCA_ALL) || !m_mapStatusBarAttrib.IsEmpty())
+			m_mapStatusBarAttrib.Set(TDCA_ALL);
+		else
+			m_mapStatusBarAttrib.Append(mapAttribIDs);
 	}
 }
 
@@ -3798,7 +3797,13 @@ LRESULT CToDoListWnd::OnToDoCtrlNotifyMod(WPARAM wp, LPARAM lp)
 	if (pMod->mapAttrib.Has(TDCA_PASTE))
 		m_idleTasks.UpdateAutoListData();
 
-	m_idleTasks.UpdateTimeTrackerTasks(FALSE, pMod->mapAttrib);
+	// If this is a 'new task' notification pass it on to the time-tracker 
+	// immediately because its correct working depends on always being up to date
+	if (pMod->mapAttrib.Has(TDCA_NEWTASK))
+		UpdateTimeTrackerTasks(FALSE, pMod->mapAttrib);
+	else
+		m_idleTasks.UpdateTimeTrackerTasks(FALSE, pMod->mapAttrib);
+
 	m_idleTasks.UpdateStatusBar(pMod->mapAttrib);
 
 	if (m_dlgReminders.UpdateModifiedTasks(&tdc, pMod->aTaskIDs, pMod->mapAttrib))
@@ -5827,7 +5832,15 @@ BOOL CToDoListWnd::ProcessStartupOptions(const CTDCStartupOptions& startup, BOOL
 		int nNumCmd = startup.GetCommandIDs(aCmdIDs);
 
 		for (int nCmd = 0; nCmd < nNumCmd; nCmd++)
+		{
+			// Usually commands are initiated through user interactions
+			// which allows essential housekeeping to occur during idle time. 
+			// Since that's not the case here we have to simulate the idle
+			// time processing before executing each command.
+			while (DoIdleProcessing());
+
 			SendMessage(WM_COMMAND, MAKEWPARAM(aCmdIDs[nCmd], 0), 0);
+		}
 	}
 
 	// 6. Source Control --------------------------------------
