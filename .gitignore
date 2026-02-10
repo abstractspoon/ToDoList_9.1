@@ -273,3 +273,7 @@ paket-files/
 *.user
 *.aps
 *.csv
+*.dll
+*.exe
+*.map
+*.res
