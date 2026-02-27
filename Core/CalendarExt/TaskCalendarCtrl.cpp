@@ -152,7 +152,7 @@ BOOL CTaskCalendarCtrl::HasOptionChanged(int nOption, DWORD dwOldOptions, DWORD 
 void CTaskCalendarCtrl::SetOptions(DWORD dwNewOptions, LPCTSTR szHideParentTag)
 {
 	BOOL bHideParentChange = (HasOptionChanged(TCCO_HIDEPARENTTASKS, m_dwOptions, dwNewOptions) ||
-							  (HasOption(TCCO_HIDEPARENTTASKS) && (m_sHideParentTag != szHideParentTag)));
+							  (HasOption(TCCO_HIDEPARENTTASKS) && szHideParentTag && (m_sHideParentTag != szHideParentTag)));
 
 	BOOL bOtherOptionsChange = HasOptionChanged(~TCCO_HIDEPARENTTASKS, m_dwOptions, dwNewOptions);
 	BOOL bDateDisplayChange = HasOptionChanged(TCCO_DATEDISPLAYOPTIONS, m_dwOptions, dwNewOptions);
