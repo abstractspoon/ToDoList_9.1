@@ -775,7 +775,7 @@ void CTDLTransEditDlg::OnToolsCleanUp()
 			if (!RecheckYourLanguagePath(sTranslation))
 				return;
 
-			VERIFY(TransText::CleanupDictionary(m_sYourLanguagePath, sTranslation));
+			TransText::CleanupDictionary(m_sYourLanguagePath, sTranslation);
 		}
 	}
 }
