@@ -52,7 +52,8 @@ END_MESSAGE_MAP()
 
 void CTaskMiniCalendarCtrl::SetOptions(DWORD dwOptions, LPCTSTR szHideParentTag)
 {
-	if ((m_dwOptions != dwOptions) || (Misc::HasFlag(m_dwOptions, TCCO_HIDEPARENTTASKS) && (m_sHideParentTag != szHideParentTag)))
+	if ((m_dwOptions != dwOptions) || 
+		(Misc::HasFlag(m_dwOptions, TCCO_HIDEPARENTTASKS) && szHideParentTag && (m_sHideParentTag != szHideParentTag)))
 	{
 		m_dwOptions = dwOptions;
 		m_sHideParentTag = szHideParentTag;
